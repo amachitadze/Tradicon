@@ -1,0 +1,5 @@
+{
+  "name": "Spanish Verb Conjugator",
+  "description": "A simple and fast Spanish verb conjugator powered by the Gemini API.",
+  "requestFramePermissions": []
+}
