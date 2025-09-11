@@ -6,21 +6,32 @@ import { GoogleGenAI, Type } from '@google/genai';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
+const LOGO_URLS = {
+    es: 'https://i.postimg.cc/L8PF2rq9/Logo-ENG-full-B.png',
+    ka: 'https://i.postimg.cc/6pXY4Sj5/Logo-GEO-full-B.png'
+};
+
 // --- i18n Translations ---
 const translations = {
     es: {
-        pageTitle: "Conjugador de Verbos",
+        pageTitle: "Conjugador y Diccionario",
         headerTitle: "CONJUGADOR",
+        dictionaryHeaderTitle: "DICCIONARIO",
         inputPlaceholder: "Escribe un verbo en español...",
+        dictionaryInputPlaceholder: "Escribe una palabra...",
         submitButton: "Conjugar",
+        dictionarySubmitButton: "Buscar",
         placeholderText: "Introduce un verbo para ver sus conjugaciones.",
+        dictionaryPlaceholderText: "Introduce una palabra para ver su definición.",
         conjugatingText: "Conjugando...",
+        searchingText: "Buscando...",
         errorPrefix: "Error",
-        errorDefault: "No se pudo conjugar el verbo. Por favor, inténtalo de nuevo.",
+        errorDefault: "Ocurrió un error. Por favor, inténtalo de nuevo.",
         popularTab: "Populares",
         favoritesTab: "Favoritos",
         recentsTab: "Recientemente",
-        favoritesEmpty: "Añade verbos a favoritos con la estrella ★",
+        favoritesEmptyConjugator: "Añade verbos a favoritos con la estrella ★",
+        favoritesEmptyDictionary: "Añade palabras a favoritos con la estrella ★",
         recentsEmpty: "Tu historial de búsqueda aparecerá aquí.",
         favoriteAriaLabelAdd: "Añadir a favoritos",
         favoriteAriaLabelRemove: "Quitar de favoritos",
@@ -29,8 +40,15 @@ const translations = {
         infinitiveCard: "Infinitivo",
         gerundCard: "Gerundio",
         participleCard: "Participio",
-        footerCredit: 'Creado con la moderación de <a href="http://bit.ly/av-ma" target="_blank" rel="noopener noreferrer">Avtandil Machitadze</a> vía Gemini.',
         footerMaterials: 'Materiales de apoyo: <a href="https://es-avma.blogspot.com/" target="_blank" rel="noopener noreferrer">es-avma.blogspot.com</a>',
+        logoAltText: "Logo de Avtandil Machitadze",
+        footerGeminiCredit: 'El sitio se basa en la inteligencia artificial de Gemini.',
+        conjugatorTab: "Conjugador",
+        dictionaryTab: "Diccionario",
+        definitionLabel: "Definición",
+        synonymsLabel: "Sinónimos",
+        antonymsLabel: "Antónimos",
+        examplesLabel: "Ejemplos",
         tenseExplanations: {
             infinitivo: {
                 title: "Infinitivo",
@@ -99,18 +117,24 @@ const translations = {
         }
     },
     ka: {
-        pageTitle: "ესპანური ზმნების უღლება",
-        headerTitle: "CONJUGADOR",
+        pageTitle: "უღლება და ლექსიკონი",
+        headerTitle: "უღლება",
+        dictionaryHeaderTitle: "ლექსიკონი",
         inputPlaceholder: "დაწერეთ ზმნა ქართულად ან ესპანურად...",
+        dictionaryInputPlaceholder: "დაწერეთ სიტყვა ქართულად ან ესპანურად...",
         submitButton: "უღლება",
+        dictionarySubmitButton: "ძებნა",
         placeholderText: "შეიყვანეთ ზმნა მისი უღლების სანახავად.",
+        dictionaryPlaceholderText: "შეიყვანეთ სიტყვა მისი განმარტების სანახავად.",
         conjugatingText: "ვამზადებ უღლებას...",
+        searchingText: "ვიძიებ...",
         errorPrefix: "შეცდომა",
-        errorDefault: "ზმნის უღლება ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან.",
+        errorDefault: "მოხდა შეცდომა. გთხოვთ, სცადოთ თავიდან.",
         popularTab: "პოპულარული",
         favoritesTab: "ფავორიტები",
         recentsTab: "ბოლოს ნანახი",
-        favoritesEmpty: "დაამატეთ ზმნები ფავორიტებში ვარსკვლავით ★",
+        favoritesEmptyConjugator: "დაამატეთ ზმნები ფავორიტებში ვარსკვლავით ★",
+        favoritesEmptyDictionary: "დაამატეთ სიტყვები ფავორიტებში ვარსკვლავით ★",
         recentsEmpty: "თქვენი ძიების ისტორია აქ გამოჩნდება.",
         favoriteAriaLabelAdd: "ფავორიტებში დამატება",
         favoriteAriaLabelRemove: "ფავორიტებიდან წაშლა",
@@ -119,8 +143,15 @@ const translations = {
         infinitiveCard: "Infinitivo",
         gerundCard: "Gerundio",
         participleCard: "Participio",
-        footerCredit: 'შექმნილია <a href="http://bit.ly/av-ma" target="_blank" rel="noopener noreferrer">ავთანდილ მაჩიტაძის</a> მოდერაციით Gemini-ს საშუალებით.',
         footerMaterials: 'დამხმარე მასალები: <a href="https://es-avma.blogspot.com/" target="_blank" rel="noopener noreferrer">es-avma.blogspot.com</a>',
+        logoAltText: "ავთანდილ მაჩიტაძის ლოგო",
+        footerGeminiCredit: 'საიტი ეფუძნება Gemini-ს ხელოვნურ ინტელექტს.',
+        conjugatorTab: "უღლება",
+        dictionaryTab: "ლექსიკონი",
+        definitionLabel: "განმარტება",
+        synonymsLabel: "სინონიმები",
+        antonymsLabel: "ანტონიმები",
+        examplesLabel: "მაგალითები",
         tenseExplanations: {
             infinitivo: {
                 title: "Infinitivo (ინფინიტივი)",
@@ -191,7 +222,11 @@ const translations = {
 };
 
 type Language = keyof typeof translations;
+type View = 'conjugator' | 'dictionary';
+
 let currentLanguage: Language = 'es';
+let currentView: View = 'conjugator';
+let lastSearchedTerm: string | null = null;
 
 // DOM Elements
 const form = document.getElementById('conjugator-form') as HTMLFormElement;
@@ -203,6 +238,8 @@ const modalBody = document.getElementById('modal-body-content') as HTMLElement;
 const modalCloseBtn = document.getElementById('modal-close-btn') as HTMLButtonElement;
 const langButtons = document.querySelectorAll('.lang-btn');
 const suggestionsContainer = document.getElementById('autocomplete-suggestions') as HTMLElement;
+const navConjugatorBtn = document.getElementById('nav-conjugator') as HTMLButtonElement;
+const navDictionaryBtn = document.getElementById('nav-dictionary') as HTMLButtonElement;
 
 
 // --- Spanish Verb List with Georgian Translations for Autocomplete ---
@@ -281,7 +318,7 @@ const VERB_LIST = [
 ];
 
 
-// --- Gemini JSON Schema ---
+// --- Gemini JSON Schemas ---
 const pronounConjugationSchema = {
     type: Type.OBJECT,
     properties: {
@@ -304,7 +341,7 @@ const tenseSchema = {
     required: ["conjugaciones", "ejemplo"]
 };
 
-const schema = {
+const conjugatorSchema = {
     type: Type.OBJECT,
     properties: {
         infinitivo: { type: Type.STRING, description: "El infinitivo del verbo." },
@@ -316,12 +353,35 @@ const schema = {
         futuro_simple: tenseSchema,
         gerundio: { type: Type.STRING },
         participio: { type: Type.STRING },
-        error: { type: Type.STRING, description: "Mensaje de error si la entrada no es un verbo válido." }
+        error: { type: Type.STRING, description: "Mensaje de error si la entrada no es un verbo en infinitivo válido en español." }
     },
 };
 
+const dictionarySchema = {
+    type: Type.OBJECT,
+    properties: {
+        palabra: { type: Type.STRING, description: "La palabra buscada." },
+        definicion: { type: Type.STRING, description: "La definición de la palabra." },
+        sinonimos: { type: Type.ARRAY, items: { type: Type.STRING } },
+        antonimos: { type: Type.ARRAY, items: { type: Type.STRING } },
+        ejemplos: {
+            type: Type.OBJECT,
+            properties: {
+                presente: { type: Type.STRING, description: "Frase de ejemplo en Presente de Indicativo." },
+                preterito_perfecto: { type: Type.STRING, description: "Frase de ejemplo en Pretérito Perfecto Compuesto." },
+                preterito_indefinido: { type: Type.STRING, description: "Frase de ejemplo en Pretérito Perfecto Simple (Indefinido)." },
+                futuro_simple: { type: Type.STRING, description: "Frase de ejemplo en Futuro Simple." },
+                gerundio: { type: Type.STRING, description: "Frase de ejemplo usando la palabra en un contexto de Gerundio (si aplica)." }
+            }
+        },
+        error: { type: Type.STRING, description: "Mensaje de error si la entrada no es una palabra válida." }
+    },
+};
+
+
 // --- localStorage Helpers ---
 const MOST_COMMON_VERBS = ["ser", "estar", "tener", "hacer", "ir", "decir", "poder", "saber", "querer", "haber", "venir", "ver"];
+const MOST_COMMON_WORDS = ["hola", "adiós", "gracias", "casa", "amigo", "bueno", "grande", "amarillo", "comida", "agua", "tiempo", "ahora"];
 const MAX_RECENTS = 12;
 
 function getFromStorage(key: string): string[] {
@@ -338,17 +398,12 @@ function saveToStorage(key: string, data: string[]) {
     localStorage.setItem(key, JSON.stringify(data));
 }
 
-function getFavorites(): string[] {
-    return getFromStorage('favoriteVerbs');
-}
-
-function isFavorite(verb: string): boolean {
-    return getFavorites().includes(verb.toLowerCase());
-}
-
-function toggleFavorite(verb: string) {
+// Conjugator storage
+function getFavoriteVerbs(): string[] { return getFromStorage('favoriteVerbs'); }
+function isFavoriteVerb(verb: string): boolean { return getFavoriteVerbs().includes(verb.toLowerCase()); }
+function toggleFavoriteVerb(verb: string) {
     verb = verb.toLowerCase();
-    const favorites = getFavorites();
+    const favorites = getFavoriteVerbs();
     const index = favorites.indexOf(verb);
     if (index > -1) {
         favorites.splice(index, 1);
@@ -357,20 +412,38 @@ function toggleFavorite(verb: string) {
     }
     saveToStorage('favoriteVerbs', favorites);
 }
-
-function getRecents(): string[] {
-    return getFromStorage('recentVerbs');
-}
-
-function addRecent(verb: string) {
+function getRecentVerbs(): string[] { return getFromStorage('recentVerbs'); }
+function addRecentVerb(verb: string) {
     verb = verb.toLowerCase();
-    let recents = getRecents();
+    let recents = getRecentVerbs();
     recents = recents.filter(v => v !== verb);
     recents.unshift(verb);
-    if (recents.length > MAX_RECENTS) {
-        recents.pop();
-    }
+    if (recents.length > MAX_RECENTS) recents.pop();
     saveToStorage('recentVerbs', recents);
+}
+
+// Dictionary storage
+function getFavoriteWords(): string[] { return getFromStorage('favoriteWords'); }
+function isFavoriteWord(word: string): boolean { return getFavoriteWords().includes(word.toLowerCase()); }
+function toggleFavoriteWord(word: string) {
+    word = word.toLowerCase();
+    const favorites = getFavoriteWords();
+    const index = favorites.indexOf(word);
+    if (index > -1) {
+        favorites.splice(index, 1);
+    } else {
+        favorites.unshift(word);
+    }
+    saveToStorage('favoriteWords', favorites);
+}
+function getRecentWords(): string[] { return getFromStorage('recentWords'); }
+function addRecentWord(word: string) {
+    word = word.toLowerCase();
+    let recents = getRecentWords();
+    recents = recents.filter(w => w !== word);
+    recents.unshift(word);
+    if (recents.length > MAX_RECENTS) recents.pop();
+    saveToStorage('recentWords', recents);
 }
 
 
@@ -391,32 +464,44 @@ const tenseTitleMap = {
     preterito_imperfecto: "Pretérito Imperfecto",
     futuro_simple: "Futuro Simple (Imperfecto)"
 };
+const exampleTenseMap = {
+    presente: "Presente",
+    preterito_perfecto: "Pretérito Perfecto",
+    preterito_indefinido: "Pretérito Indefinido",
+    futuro_simple: "Futuro Simple",
+    gerundio: "Gerundio"
+};
 
-function renderInitialView() {
+function renderApp() {
+    if (currentView === 'conjugator') {
+        renderConjugatorInitialView();
+    } else {
+        renderDictionaryInitialView();
+    }
+    updateUIForLanguage();
+}
+
+function renderDictionaryInitialView() {
     resultsContainer.innerHTML = '';
-
-    const recents = getRecents();
-    const favorites = getFavorites();
+    const recents = getRecentWords();
+    const favorites = getFavoriteWords();
     const t = translations[currentLanguage];
 
     const tabsData = [
-        { id: 'populares', title: t.popularTab, verbs: MOST_COMMON_VERBS, emptyText: '' },
-        { id: 'favoritos', title: t.favoritesTab, verbs: favorites, emptyText: t.favoritesEmpty },
-        { id: 'recientes', title: t.recentsTab, verbs: recents, emptyText: t.recentsEmpty }
+        { id: 'populares', title: t.popularTab, items: MOST_COMMON_WORDS, emptyText: '' },
+        { id: 'favoritos', title: t.favoritesTab, items: favorites, emptyText: t.favoritesEmptyDictionary },
+        { id: 'recientes', title: t.recentsTab, items: recents, emptyText: t.recentsEmpty }
     ];
 
     const tabsContainer = document.createElement('div');
     tabsContainer.className = 'tabs';
-
     const tabNav = document.createElement('div');
     tabNav.className = 'tab-nav';
     tabNav.setAttribute('role', 'tablist');
-
     const tabContent = document.createElement('div');
     tabContent.className = 'tab-content';
 
     tabsData.forEach((tab, index) => {
-        // Create tab button
         const button = document.createElement('button');
         button.className = 'tab-link' + (index === 0 ? ' active' : '');
         button.textContent = tab.title;
@@ -426,17 +511,16 @@ function renderInitialView() {
         button.dataset.tabTarget = `#tab-${tab.id}`;
         tabNav.appendChild(button);
 
-        // Create tab pane
         const pane = document.createElement('div');
         pane.id = `tab-${tab.id}`;
         pane.className = 'tab-pane' + (index === 0 ? ' active' : '');
         pane.setAttribute('role', 'tabpanel');
         
-        if (tab.verbs.length > 0) {
+        if (tab.items.length > 0) {
             const gridEl = document.createElement('div');
-            gridEl.className = 'verb-card-grid';
-            gridEl.innerHTML = tab.verbs.map(verb =>
-                `<button class="verb-card" data-verb="${verb}">${verb.charAt(0).toUpperCase() + verb.slice(1)}</button>`
+            gridEl.className = 'item-card-grid';
+            gridEl.innerHTML = tab.items.map(item =>
+                `<button class="item-card" data-word="${item}">${item.charAt(0).toUpperCase() + item.slice(1)}</button>`
             ).join('');
             pane.appendChild(gridEl);
         } else {
@@ -452,13 +536,11 @@ function renderInitialView() {
     tabsContainer.appendChild(tabContent);
     resultsContainer.appendChild(tabsContainer);
 
-    // Event listeners for tabs
     tabNav.querySelectorAll('.tab-link').forEach(button => {
         button.addEventListener('click', () => {
             tabNav.querySelector('.active')?.classList.remove('active');
             tabNav.querySelector('.active')?.setAttribute('aria-selected', 'false');
             tabContent.querySelector('.active')?.classList.remove('active');
-
             button.classList.add('active');
             button.setAttribute('aria-selected', 'true');
             const targetPane = tabContent.querySelector((button as HTMLElement).dataset.tabTarget!);
@@ -466,8 +548,87 @@ function renderInitialView() {
         });
     });
 
-    // Event listeners for verb cards
-    document.querySelectorAll('.verb-card').forEach(card => {
+    document.querySelectorAll('.item-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const word = (card as HTMLButtonElement).dataset.word;
+            if (word) {
+                input.value = word;
+                searchWord(word);
+            }
+        });
+    });
+}
+
+function renderConjugatorInitialView() {
+    resultsContainer.innerHTML = '';
+    const recents = getRecentVerbs();
+    const favorites = getFavoriteVerbs();
+    const t = translations[currentLanguage];
+
+    const tabsData = [
+        { id: 'populares', title: t.popularTab, items: MOST_COMMON_VERBS, emptyText: '' },
+        { id: 'favoritos', title: t.favoritesTab, items: favorites, emptyText: t.favoritesEmptyConjugator },
+        { id: 'recientes', title: t.recentsTab, items: recents, emptyText: t.recentsEmpty }
+    ];
+
+    const tabsContainer = document.createElement('div');
+    tabsContainer.className = 'tabs';
+
+    const tabNav = document.createElement('div');
+    tabNav.className = 'tab-nav';
+    tabNav.setAttribute('role', 'tablist');
+
+    const tabContent = document.createElement('div');
+    tabContent.className = 'tab-content';
+
+    tabsData.forEach((tab, index) => {
+        const button = document.createElement('button');
+        button.className = 'tab-link' + (index === 0 ? ' active' : '');
+        button.textContent = tab.title;
+        button.setAttribute('role', 'tab');
+        button.setAttribute('aria-controls', `tab-${tab.id}`);
+        button.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+        button.dataset.tabTarget = `#tab-${tab.id}`;
+        tabNav.appendChild(button);
+
+        const pane = document.createElement('div');
+        pane.id = `tab-${tab.id}`;
+        pane.className = 'tab-pane' + (index === 0 ? ' active' : '');
+        pane.setAttribute('role', 'tabpanel');
+        
+        if (tab.items.length > 0) {
+            const gridEl = document.createElement('div');
+            gridEl.className = 'item-card-grid';
+            gridEl.innerHTML = tab.items.map(item =>
+                `<button class="item-card" data-verb="${item}">${item.charAt(0).toUpperCase() + item.slice(1)}</button>`
+            ).join('');
+            pane.appendChild(gridEl);
+        } else {
+            const emptyEl = document.createElement('p');
+            emptyEl.className = 'empty-section-text';
+            emptyEl.textContent = tab.emptyText;
+            pane.appendChild(emptyEl);
+        }
+        tabContent.appendChild(pane);
+    });
+
+    tabsContainer.appendChild(tabNav);
+    tabsContainer.appendChild(tabContent);
+    resultsContainer.appendChild(tabsContainer);
+
+    tabNav.querySelectorAll('.tab-link').forEach(button => {
+        button.addEventListener('click', () => {
+            tabNav.querySelector('.active')?.classList.remove('active');
+            tabNav.querySelector('.active')?.setAttribute('aria-selected', 'false');
+            tabContent.querySelector('.active')?.classList.remove('active');
+            button.classList.add('active');
+            button.setAttribute('aria-selected', 'true');
+            const targetPane = tabContent.querySelector((button as HTMLElement).dataset.tabTarget!);
+            targetPane?.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('.item-card').forEach(card => {
         card.addEventListener('click', () => {
             const verb = (card as HTMLButtonElement).dataset.verb;
             if (verb) {
@@ -508,14 +669,14 @@ function renderConjugations(data: any) {
     favoriteBtn.innerHTML = `&#9733;`;
 
     const updateFavBtn = () => {
-        const isFav = isFavorite(verb);
+        const isFav = isFavoriteVerb(verb);
         favoriteBtn.classList.toggle('favorited', isFav);
         favoriteBtn.setAttribute('aria-label', isFav ? t.favoriteAriaLabelRemove : t.favoriteAriaLabelAdd);
     };
     updateFavBtn();
 
     favoriteBtn.addEventListener('click', () => {
-        toggleFavorite(verb);
+        toggleFavoriteVerb(verb);
         updateFavBtn();
     });
 
@@ -577,6 +738,123 @@ function renderConjugations(data: any) {
     });
 }
 
+function renderDictionaryResults(data: any) {
+    resultsContainer.innerHTML = '';
+    const t = translations[currentLanguage];
+    const word = data.palabra;
+
+    const headerContainer = document.createElement('div');
+    headerContainer.className = 'verb-header-container';
+    const wordHeader = document.createElement('h2');
+    wordHeader.textContent = word.charAt(0).toUpperCase() + word.slice(1);
+    wordHeader.className = 'word-title';
+
+    const favoriteBtn = document.createElement('button');
+    favoriteBtn.className = 'favorite-btn';
+    favoriteBtn.innerHTML = `&#9733;`;
+
+    const updateFavBtn = () => {
+        const isFav = isFavoriteWord(word);
+        favoriteBtn.classList.toggle('favorited', isFav);
+        favoriteBtn.setAttribute('aria-label', isFav ? t.favoriteAriaLabelRemove : t.favoriteAriaLabelAdd);
+    };
+    updateFavBtn();
+
+    favoriteBtn.addEventListener('click', () => {
+        toggleFavoriteWord(word);
+        updateFavBtn();
+    });
+
+    headerContainer.appendChild(wordHeader);
+    headerContainer.appendChild(favoriteBtn);
+    resultsContainer.appendChild(headerContainer);
+    
+    // Definition (no card)
+    if (data.definicion) {
+        const definition = document.createElement('p');
+        definition.className = 'verb-definition'; // Reusing class for consistency
+        definition.textContent = data.definicion;
+        resultsContainer.appendChild(definition);
+    }
+
+    const resultsWrapper = document.createElement('div');
+    resultsWrapper.className = 'word-results-container';
+
+    // Synonyms
+    if (data.sinonimos && data.sinonimos.length > 0) {
+        const block = document.createElement('div');
+        block.className = 'result-block';
+        block.innerHTML = `
+            <h3>${t.synonymsLabel}</h3>
+            <div class="word-list">
+                ${data.sinonimos.map((s: string) => `<button class="word-tag" data-word="${s}">${s}</button>`).join('')}
+            </div>
+        `;
+        resultsWrapper.appendChild(block);
+    }
+
+    // Antonyms
+    if (data.antonimos && data.antonimos.length > 0) {
+        const block = document.createElement('div');
+        block.className = 'result-block';
+        block.innerHTML = `
+            <h3>${t.antonymsLabel}</h3>
+            <div class="word-list">
+                ${data.antonimos.map((a: string) => `<button class="word-tag" data-word="${a}">${a}</button>`).join('')}
+            </div>
+        `;
+        resultsWrapper.appendChild(block);
+    }
+    
+    // Examples
+    if (data.ejemplos) {
+        const exampleEntries = Object.entries(data.ejemplos).filter(([_, value]) => value);
+        if (exampleEntries.length > 0) {
+             const examplesHtml = exampleEntries.map(([key, sentence]) => {
+                // Georgian case: sentence is an object
+                if (currentLanguage === 'ka' && typeof sentence === 'object' && sentence !== null && 'frase_espanol' in sentence) {
+                    const esSentence = (sentence as any).frase_espanol?.replace(new RegExp(`\\b(${word})\\b`, 'gi'), '<strong>$1</strong>') || '';
+                    const kaSentence = (sentence as any).frase_georgiano;
+                    return `<li><strong>${exampleTenseMap[key as keyof typeof exampleTenseMap]}:</strong> <span>${esSentence}</span><small class="translation">${kaSentence}</small></li>`;
+                }
+                // Spanish case: sentence is a string
+                else if (typeof sentence === 'string') {
+                     return `<li><strong>${exampleTenseMap[key as keyof typeof exampleTenseMap]}:</strong> ${sentence.replace(new RegExp(`\\b(${word})\\b`, 'gi'), '<strong>$1</strong>')}</li>`;
+                }
+                // Fallback for unexpected data format
+                return '';
+             }).filter(Boolean).join(''); // filter(Boolean) removes empty strings from the array
+
+             if (examplesHtml) {
+                 const block = document.createElement('div');
+                 block.className = 'result-block';
+                 block.innerHTML = `
+                    <h3>${t.examplesLabel}</h3>
+                    <ul class="examples-list">
+                        ${examplesHtml}
+                    </ul>
+                `;
+                resultsWrapper.appendChild(block);
+             }
+        }
+    }
+
+    // Only append the wrapper if it has content
+    if (resultsWrapper.hasChildNodes()) {
+      resultsContainer.appendChild(resultsWrapper);
+    }
+
+    document.querySelectorAll('.word-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+            const newWord = (tag as HTMLButtonElement).dataset.word;
+            if (newWord) {
+                searchWord(newWord);
+            }
+        });
+    });
+}
+
+
 function boldEnding(fullWord: string, root: string): string {
     const parts = fullWord.split(' ');
     if (parts.length > 1) {
@@ -609,7 +887,6 @@ function openModal(tenseKey: string) {
             </ul>`;
     } else { // Handle regular tense tables
         const roots = { hablar: 'habl', comer: 'com', vivir: 'viv' };
-        // FIX: Cast data.examples to resolve union type ambiguity for properties 'hablar', 'comer', and 'vivir'. The type guard above ensures this is safe.
         const examples = data.examples as { hablar: string[]; comer: string[]; vivir: string[]; };
         modalBody.innerHTML = `
             <h2 id="modal-title">${data.title}</h2>
@@ -639,6 +916,79 @@ function closeModal() {
     document.body.style.overflow = 'auto';
 }
 
+async function searchWord(word: string) {
+    if (!word) return;
+    const t = translations[currentLanguage];
+    suggestionsContainer.hidden = true;
+    input.value = word;
+
+    resultsContainer.innerHTML = `<div class="loader-container"><div class="loader"></div><p>${t.searchingText}</p></div>`;
+    input.disabled = true;
+    button.disabled = true;
+
+    try {
+        const schemaForApi = JSON.parse(JSON.stringify(dictionarySchema));
+        let prompt = '';
+        
+        if (currentLanguage === 'ka') {
+            schemaForApi.properties.definicion.description = "La definición de la palabra en georgiano.";
+            const exampleWithTranslationSchema = {
+                type: Type.OBJECT,
+                properties: {
+                    frase_espanol: { type: Type.STRING, description: "La frase de ejemplo en español." },
+                    frase_georgiano: { type: Type.STRING, description: "La traducción de la frase al georgiano." }
+                },
+                required: ["frase_espanol", "frase_georgiano"]
+            };
+             for (const key in schemaForApi.properties.ejemplos.properties) {
+                schemaForApi.properties.ejemplos.properties[key] = exampleWithTranslationSchema;
+            }
+
+            prompt = `Busca la palabra en español '${word}'. Proporciona:
+1. La palabra buscada.
+2. Una breve definición EN GEORGIANO.
+3. Una lista de sinónimos en español.
+4. Una lista de antónimos en español.
+5. Para cada uno de los siguientes tiempos/modos (Presente, Pretérito Perfecto Compuesto, Pretérito Perfecto Simple (Indefinido), Futuro Simple, y Gerundio), proporciona una frase de ejemplo EN ESPAÑOL y su correspondiente traducción AL GEORGIANO.
+Responde únicamente con el objeto JSON que se ajuste al esquema proporcionado. Si la entrada no es una palabra válida, responde con un objeto JSON que contenga únicamente la propiedad "error".`;
+        } else {
+            prompt = `Busca la palabra en español '${word}'. Proporciona:
+1. La palabra buscada.
+2. Una breve definición EN ESPAÑOL.
+3. Una lista de sinónimos en español.
+4. Una lista de antónimos en español.
+5. Una frase de ejemplo EN ESPAÑOL para cada uno de los siguientes tiempos/modos: Presente, Pretérito Perfecto Compuesto, Pretérito Perfecto Simple (Indefinido), Futuro Simple, y Gerundio.
+Responde únicamente con el objeto JSON que se ajuste al esquema proporcionado. Si la entrada no es una palabra válida, responde con un objeto JSON que contenga únicamente la propiedad "error".`;
+        }
+
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: { responseMimeType: "application/json", responseSchema: schemaForApi, temperature: 0.2 }
+        });
+
+        const wordData = JSON.parse(response.text);
+        if (wordData.error) throw new Error(wordData.error);
+        
+        addRecentWord(wordData.palabra);
+        lastSearchedTerm = wordData.palabra; // Store term on success
+        renderDictionaryResults(wordData);
+
+    } catch (error) {
+        console.error("API Error:", error);
+        const userMessage = error instanceof Error ? error.message : t.errorDefault;
+        resultsContainer.innerHTML = `<p class="error">${t.errorPrefix}: ${userMessage}</p>`;
+        lastSearchedTerm = null; // Clear term on error
+        renderDictionaryInitialView();
+    } finally {
+        input.disabled = false;
+        button.disabled = false;
+        input.focus();
+    }
+}
+
+
 async function conjugateVerb(verb: string) {
     if (!verb) return;
     const t = translations[currentLanguage];
@@ -650,7 +1000,7 @@ async function conjugateVerb(verb: string) {
     button.disabled = true;
 
     try {
-        const schemaForApi = JSON.parse(JSON.stringify(schema));
+        const schemaForApi = JSON.parse(JSON.stringify(conjugatorSchema));
         
         const definitionPrompt = currentLanguage === 'ka'
             ? `2. Una breve definición del verbo EN GEORGIANO.`
@@ -672,14 +1022,16 @@ Responde únicamente con el objeto JSON que se ajuste al esquema proporcionado. 
         const conjugations = JSON.parse(response.text);
         if (conjugations.error) throw new Error(conjugations.error);
         
-        addRecent(conjugations.infinitivo);
+        addRecentVerb(conjugations.infinitivo);
+        lastSearchedTerm = conjugations.infinitivo; // Store term on success
         renderConjugations(conjugations);
 
     } catch (error) {
         console.error("API Error:", error);
         const userMessage = error instanceof Error ? error.message : t.errorDefault;
         resultsContainer.innerHTML = `<p class="error">${t.errorPrefix}: ${userMessage}</p>`;
-        renderInitialView();
+        lastSearchedTerm = null; // Clear term on error
+        renderConjugatorInitialView();
     } finally {
         input.disabled = false;
         button.disabled = false;
@@ -687,49 +1039,78 @@ Responde únicamente con el objeto JSON que se ajuste al esquema proporcionado. 
     }
 }
 
-// --- Language Switcher ---
+// --- Language & View Switcher ---
 function updateUIForLanguage() {
     const t = translations[currentLanguage];
     document.documentElement.lang = currentLanguage;
     document.title = t.pageTitle;
 
-    (document.getElementById('header-title') as HTMLElement).textContent = t.headerTitle;
-    (document.getElementById('verb-input') as HTMLInputElement).placeholder = t.inputPlaceholder;
-    (document.getElementById('submit-button') as HTMLButtonElement).textContent = t.submitButton;
-    const placeholder = document.getElementById('placeholder-text');
-    if (placeholder) placeholder.textContent = t.placeholderText;
+    const headerTitleEl = document.getElementById('header-title') as HTMLElement;
+    if (currentView === 'dictionary') {
+        headerTitleEl.textContent = t.dictionaryHeaderTitle;
+    } else {
+        headerTitleEl.textContent = t.headerTitle;
+    }
+    
+    (document.getElementById('nav-conjugator') as HTMLElement).textContent = t.conjugatorTab;
+    (document.getElementById('nav-dictionary') as HTMLElement).textContent = t.dictionaryTab;
 
-    (document.getElementById('footer-credit') as HTMLElement).innerHTML = t.footerCredit;
+    if (currentView === 'conjugator') {
+        input.placeholder = t.inputPlaceholder;
+        button.textContent = t.submitButton;
+        const placeholder = document.getElementById('placeholder-text');
+        if (placeholder) placeholder.textContent = t.placeholderText;
+        if (document.querySelector('.tabs') || document.querySelector('.placeholder')) {
+            renderConjugatorInitialView();
+        }
+    } else { // Dictionary view
+        input.placeholder = t.dictionaryInputPlaceholder;
+        button.textContent = t.dictionarySubmitButton;
+        const placeholder = document.getElementById('placeholder-text');
+        if (placeholder) placeholder.textContent = t.dictionaryPlaceholderText;
+        if (document.querySelector('.tabs') || document.querySelector('.placeholder')) {
+            renderDictionaryInitialView();
+        }
+    }
+
     (document.getElementById('footer-materials') as HTMLElement).innerHTML = t.footerMaterials;
+    (document.getElementById('footer-gemini-credit') as HTMLElement).innerHTML = t.footerGeminiCredit;
+    
+    const footerLogo = document.getElementById('footer-logo-img') as HTMLImageElement;
+    if (footerLogo) {
+        footerLogo.src = LOGO_URLS[currentLanguage];
+        footerLogo.alt = t.logoAltText;
+    }
     
     langButtons.forEach(btn => {
         btn.classList.toggle('active', (btn as HTMLElement).dataset.lang === currentLanguage);
     });
+}
 
-    if (document.querySelector('.tabs') || document.querySelector('.placeholder')) {
-        renderInitialView();
-    } else if (document.querySelector('.verb-title')) {
-        const favBtn = document.querySelector('.favorite-btn') as HTMLButtonElement;
-        if(favBtn) {
-            const isFav = favBtn.classList.contains('favorited');
-            favBtn.setAttribute('aria-label', isFav ? t.favoriteAriaLabelRemove : t.favoriteAriaLabelAdd);
-        }
-        document.querySelectorAll('.example-sentence strong:first-child').forEach(el => {
-            (el as HTMLElement).textContent = `${t.exampleLabel}:`;
-        });
-        document.querySelectorAll('.form-card h3').forEach(el => {
-            const key = (el.parentElement as HTMLElement).dataset.tense;
-            if (key === 'infinitive') el.textContent = t.infinitiveCard;
-            else if (key === 'gerundio') el.textContent = t.gerundCard;
-            else if (key === 'participio') el.textContent = t.participleCard;
-        });
-    }
+function setView(view: View) {
+    currentView = view;
+    lastSearchedTerm = null; // Clear last search when view changes
+    navConjugatorBtn.classList.toggle('active', view === 'conjugator');
+    navDictionaryBtn.classList.toggle('active', view === 'dictionary');
+    input.value = '';
+    suggestionsContainer.hidden = true;
+    renderApp();
 }
 
 function setLanguage(lang: Language) {
     currentLanguage = lang;
     localStorage.setItem('preferredLanguage', lang);
-    updateUIForLanguage();
+    updateUIForLanguage(); // Update header buttons and static text immediately.
+
+    // If a result is currently displayed, re-fetch it in the new language
+    const isShowingResults = !document.querySelector('.tabs') && !document.querySelector('.placeholder');
+    if (lastSearchedTerm && isShowingResults) {
+        if (currentView === 'conjugator') {
+            conjugateVerb(lastSearchedTerm);
+        } else {
+            searchWord(lastSearchedTerm);
+        }
+    }
 }
 
 function getInitialLanguage(): Language {
@@ -747,24 +1128,35 @@ langButtons.forEach(btn => {
     });
 });
 
+navConjugatorBtn.addEventListener('click', () => setView('conjugator'));
+navDictionaryBtn.addEventListener('click', () => setView('dictionary'));
+
+
 // --- Event Listeners & Initial Load ---
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    let verb = input.value.trim().toLowerCase();
+    let searchTerm = input.value.trim().toLowerCase();
+    if (!searchTerm) return;
 
-    if (currentLanguage === 'ka') {
-        const foundVerb = VERB_LIST.find(v => v.ka === verb);
-        if (foundVerb) {
-            verb = foundVerb.es;
+    // If Georgian is selected, try to translate the input to Spanish
+    if (currentLanguage === 'ka' && currentView === 'conjugator') {
+        const foundEntry = VERB_LIST.find(v => v.ka === searchTerm);
+        if (foundEntry) {
+            searchTerm = foundEntry.es;
         }
     }
-    conjugateVerb(verb);
+
+    if (currentView === 'conjugator') {
+        conjugateVerb(searchTerm);
+    } else {
+        searchWord(searchTerm);
+    }
 });
 
 input.addEventListener('input', () => {
     const value = input.value.trim().toLowerCase();
     suggestionsContainer.innerHTML = '';
-    if (value.length < 1) {
+    if (value.length < 1 || currentView !== 'conjugator') {
         suggestionsContainer.hidden = true;
         return;
     }
@@ -825,5 +1217,4 @@ window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hid
 
 // Initial Load
 currentLanguage = getInitialLanguage();
-updateUIForLanguage();
-renderInitialView();
+renderApp();

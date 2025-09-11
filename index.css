@@ -47,60 +47,72 @@ body {
   margin: 0 auto;
 }
 
-.lang-switcher {
+header {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 1rem;
+    width: 100%;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+
+.lang-switcher,
+.main-nav {
+    display: flex;
     background-color: var(--surface-color);
     padding: 0.25rem;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     border: 1px solid var(--border-color);
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-header {
-  margin-bottom: 2rem;
-  text-align: center;
-  width: 100%;
-}
-
-header h1 {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: var(--text-color);
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  border-bottom: 3px solid var(--primary-color-yellow);
-  padding-bottom: 0.5rem;
-  display: inline-block;
-}
-
-
+.nav-btn,
 .lang-btn {
     background: none;
     border: none;
     cursor: pointer;
     font-size: 0.9rem;
-    font-weight: 700;
-    color: #aaa;
-    padding: 0.25rem 0.5rem;
+    font-weight: 500;
+    color: #777;
+    padding: 0.35rem 0.8rem;
     transition: color 0.2s, background-color 0.2s;
-    border-radius: 8px;
+    border-radius: 9px;
+    white-space: nowrap;
 }
+.nav-btn:hover,
 .lang-btn:hover {
     color: var(--primary-color-red);
 }
+.nav-btn.active,
 .lang-btn.active {
     color: var(--text-color-light);
     background-color: var(--primary-color-red);
+    font-weight: 700;
 }
+
 .lang-separator {
     color: #ccc;
     margin: 0 0.1rem;
+    align-self: center;
 }
 
 
@@ -250,13 +262,13 @@ button[type="submit"]:disabled {
   to { opacity: 1; }
 }
 
-.verb-card-grid {
+.item-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 1rem;
 }
 
-.verb-card {
+.item-card {
   padding: 1rem;
   background-color: var(--surface-color);
   border: 1px solid var(--border-color);
@@ -270,7 +282,7 @@ button[type="submit"]:disabled {
   font-family: inherit;
 }
 
-.verb-card:hover {
+.item-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--box-shadow);
 }
@@ -298,14 +310,14 @@ button[type="submit"]:disabled {
 
 .verb-header-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 1rem;
     margin-bottom: 0.5rem;
 }
 
-.verb-title {
-  text-align: center;
+.verb-title, .word-title {
+  text-align: left;
   font-size: 2.5rem;
   color: var(--primary-color-red);
   font-weight: 700;
@@ -332,11 +344,11 @@ button[type="submit"]:disabled {
 }
 
 .verb-definition {
-  text-align: center;
+  text-align: left;
   font-size: 1.1rem;
   color: #555;
   max-width: 600px;
-  margin: 0 auto 2rem auto;
+  margin: 0 0 2rem 0;
 }
 
 .verb-main-forms {
@@ -481,6 +493,78 @@ button[type="submit"]:disabled {
     opacity: 1;
 }
 
+/* Dictionary View Styles */
+.word-results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.result-block {
+    background: var(--surface-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+}
+.result-block h3 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color-yellow);
+    padding-bottom: 0.5rem;
+}
+.word-definition-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #333;
+}
+.word-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+}
+.word-tag {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.4rem 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
+    color: var(--primary-color-red);
+}
+.word-tag:hover {
+    background-color: var(--primary-color-red);
+    color: var(--text-color-light);
+    transform: translateY(-2px);
+}
+.examples-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.examples-list li {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+.examples-list li strong {
+    font-weight: 700;
+    color: #555;
+    margin-right: 0.5rem;
+}
+.examples-list li small.translation {
+    display: block;
+    color: #555;
+    margin-top: 0.25rem;
+    padding-left: 1em;
+    font-style: italic;
+}
+
+
 .loader-container {
   display: flex;
   flex-direction: column;
@@ -506,24 +590,40 @@ button[type="submit"]:disabled {
 
 footer {
   margin-top: auto;
-  padding-top: 3rem;
-  color: #888;
-  font-size: 0.9rem;
-  text-align: center;
+  padding-top: 2rem;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid var(--border-color);
 }
 
-footer p {
-    margin-bottom: 0.5rem;
+.footer-logo {
+    height: 40px;
+    display: block;
 }
 
-footer a {
+.footer-right {
+    text-align: right;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.footer-right p {
+    margin-bottom: 0.25rem;
+}
+.footer-right p:last-child {
+    margin-bottom: 0;
+}
+
+.footer-right a {
     color: var(--primary-color-red);
     text-decoration: none;
     font-weight: 500;
 }
 
-footer a:hover {
+.footer-right a:hover {
     text-decoration: underline;
 }
 
@@ -647,11 +747,26 @@ footer a:hover {
   border-width: 0;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   header h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     letter-spacing: 2px;
   }
+}
+
+@media (max-width: 600px) {
+  .header-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  header h1 {
+    border-bottom: 3px solid var(--primary-color-yellow);
+    padding-bottom: 0.5rem;
+    font-size: 2rem;
+  }
+  
   .input-group {
     flex-direction: column;
     border-radius: var(--border-radius);
@@ -676,5 +791,12 @@ footer a:hover {
   .tab-link {
     padding: 0.75rem 1rem;
     font-size: 1rem;
+  }
+  footer {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .footer-right {
+    text-align: center;
   }
 }
