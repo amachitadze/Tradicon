@@ -8,7 +8,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const LOGO_URLS = {
     es: 'https://i.postimg.cc/L8PF2rq9/Logo-ENG-full-B.png',
-    ka: 'https://i.postimg.cc/6pXY4Sj5/Logo-GEO-full-B.png'
+    ka: 'https://i.postimg.cc/6pXY4Sj5/Logo_GEO_full_B.png'
 };
 
 // --- i18n Translations ---
@@ -639,6 +639,46 @@ function renderConjugatorInitialView() {
     });
 }
 
+function renderConjugatorSkeleton() {
+    resultsContainer.innerHTML = `
+        <div class="skeleton-container">
+            <div class="skeleton-header">
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-star"></div>
+            </div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton-grid skeleton-grid-3">
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+                <div class="skeleton skeleton-card"></div>
+            </div>
+            <div class="skeleton-grid skeleton-grid-2">
+                <div class="skeleton skeleton-card-large"></div>
+                <div class="skeleton skeleton-card-large"></div>
+                <div class="skeleton skeleton-card-large"></div>
+                <div class="skeleton skeleton-card-large"></div>
+                <div class="skeleton skeleton-card-large"></div>
+            </div>
+        </div>
+    `;
+}
+
+function renderDictionarySkeleton() {
+    resultsContainer.innerHTML = `
+        <div class="skeleton-container">
+            <div class="skeleton-header">
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-star"></div>
+            </div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-card-large"></div>
+            <div class="skeleton skeleton-card-large"></div>
+            <div class="skeleton skeleton-card-large"></div>
+        </div>
+    `;
+}
+
+
 function highlightVerbInSentence(sentence: string, conjugations: { [key: string]: string }): string {
     const allForms = Object.values(conjugations);
     allForms.sort((a, b) => b.length - a.length);
@@ -922,9 +962,10 @@ async function searchWord(word: string) {
     suggestionsContainer.hidden = true;
     input.value = word;
 
-    resultsContainer.innerHTML = `<div class="loader-container"><div class="loader"></div><p>${t.searchingText}</p></div>`;
+    renderDictionarySkeleton();
     input.disabled = true;
     button.disabled = true;
+    let fullResponseText = '';
 
     try {
         const schemaForApi = JSON.parse(JSON.stringify(dictionarySchema));
@@ -962,13 +1003,17 @@ Responde únicamente con el objeto JSON que se ajuste al esquema proporcionado. 
         }
 
 
-        const response = await ai.models.generateContent({
+        const responseStream = await ai.models.generateContentStream({
             model: 'gemini-2.5-flash',
             contents: prompt,
             config: { responseMimeType: "application/json", responseSchema: schemaForApi, temperature: 0.2 }
         });
 
-        const wordData = JSON.parse(response.text);
+        for await (const chunk of responseStream) {
+            fullResponseText += chunk.text;
+        }
+
+        const wordData = JSON.parse(fullResponseText);
         if (wordData.error) throw new Error(wordData.error);
         
         addRecentWord(wordData.palabra);
@@ -995,9 +1040,10 @@ async function conjugateVerb(verb: string) {
     suggestionsContainer.hidden = true;
     input.value = verb;
 
-    resultsContainer.innerHTML = `<div class="loader-container"><div class="loader"></div><p>${t.conjugatingText}</p></div>`;
+    renderConjugatorSkeleton();
     input.disabled = true;
     button.disabled = true;
+    let fullResponseText = '';
 
     try {
         const schemaForApi = JSON.parse(JSON.stringify(conjugatorSchema));
@@ -1013,13 +1059,17 @@ async function conjugateVerb(verb: string) {
 1.  Su infinitivo. ${definitionPrompt} 3. El Gerundio. 4. El Participio. 5. Las conjugaciones Y una frase de ejemplo para cada uno de los siguientes tiempos: Presente, Pretérito perfecto, Pretérito indefinido, Pretérito imperfecto, y Futuro simple.
 Responde únicamente con el objeto JSON que se ajuste al esquema proporcionado. Si la entrada no es un verbo en infinitivo válido en español, responde con un objeto JSON que contenga únicamente la propiedad "error".`;
 
-        const response = await ai.models.generateContent({
+        const responseStream = await ai.models.generateContentStream({
             model: 'gemini-2.5-flash',
             contents: prompt,
             config: { responseMimeType: "application/json", responseSchema: schemaForApi, temperature: 0.1 }
         });
+        
+        for await (const chunk of responseStream) {
+            fullResponseText += chunk.text;
+        }
 
-        const conjugations = JSON.parse(response.text);
+        const conjugations = JSON.parse(fullResponseText);
         if (conjugations.error) throw new Error(conjugations.error);
         
         addRecentVerb(conjugations.infinitivo);
@@ -1103,7 +1153,7 @@ function setLanguage(lang: Language) {
     updateUIForLanguage(); // Update header buttons and static text immediately.
 
     // If a result is currently displayed, re-fetch it in the new language
-    const isShowingResults = !document.querySelector('.tabs') && !document.querySelector('.placeholder');
+    const isShowingResults = !document.querySelector('.tabs') && !document.querySelector('.placeholder') && !document.querySelector('.skeleton-container');
     if (lastSearchedTerm && isShowingResults) {
         if (currentView === 'conjugator') {
             conjugateVerb(lastSearchedTerm);
