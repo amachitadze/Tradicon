@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Conjuga verbos en español, busca en el diccionario y traduce texto con la ayuda de la inteligencia artificial de Gemini. Una herramienta completa para estudiantes y hablantes de español y georgiano.">
+    <meta name="keywords" content="conjugador español, diccionario español georgiano, traductor español georgiano, verbos en español, gramática española, aprender español, gemini api, inteligencia artificial">
+    <meta name="theme-color" content="#c60b1e">
     <title>Conjugador de Verbos</title>
     <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="https://i.postimg.cc/W4dBPVcw/image.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
     <script type="importmap">
       {
         "imports": {
@@ -15,47 +21,82 @@
         }
       }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
 </head>
 <body>
     <div id="app">
         <header>
-            <div class="header-controls">
-                <div class="lang-switcher">
-                    <button class="lang-btn" data-lang="es" aria-label="Cambiar a español">ES</button>
-                    <span class="lang-separator">|</span>
-                    <button class="lang-btn" data-lang="ka" aria-label="ქართულზე გადართვა">KA</button>
+            <div class="header-content">
+                 <h1 id="header-title">CONJUGADOR</h1>
+                 <button id="mobile-lang-btn" class="lang-btn-mobile" aria-label="Change language">
+                    <img src="https://flagcdn.com/es.svg" alt="Español">
+                </button>
+                <div class="header-controls">
+                    <nav class="main-nav">
+                        <button id="nav-translator" class="nav-btn active" data-view="translator">Traductor</button>
+                        <button id="nav-dictionary" class="nav-btn" data-view="dictionary">Diccionario</button>
+                        <button id="nav-conjugator" class="nav-btn" data-view="conjugator">Conjugador</button>
+                        <button id="nav-practice" class="nav-btn" data-view="practice">Práctica</button>
+                    </nav>
+                    <div class="lang-switcher">
+                        <button class="lang-btn" data-lang="es" aria-label="Cambiar a español">ES</button>
+                        <span class="lang-separator">|</span>
+                        <button class="lang-btn" data-lang="ka" aria-label="ქართულზე გადართვა">KA</button>
+                    </div>
                 </div>
-                <nav class="main-nav">
-                    <button id="nav-conjugator" class="nav-btn active" data-view="conjugator">Conjugador</button>
-                    <button id="nav-dictionary" class="nav-btn" data-view="dictionary">Diccionario</button>
-                </nav>
             </div>
-            <h1 id="header-title">CONJUGADOR</h1>
         </header>
+
         <main>
             <form id="conjugator-form" aria-label="Formulario de conjugación de verbos">
                 <div class="input-wrapper">
                     <div class="input-group">
                         <label for="verb-input" class="sr-only">Verbo en español</label>
                         <input type="text" id="verb-input" placeholder="Escribe un verbo en español..." required autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Verbo en español para conjugar">
-                        <button type="submit" id="submit-button" aria-label="Conjugar verbo">Conjugar</button>
+                         <button type="submit" id="submit-button" aria-label="Conjugar verbo">Conjugar</button>
                     </div>
+                     <div id="mobile-submit-container"></div>
                     <div id="autocomplete-suggestions" class="autocomplete-suggestions" hidden></div>
                 </div>
             </form>
             <section id="results-container" aria-live="polite">
-                <p class="placeholder" id="placeholder-text">Introduce un verbo para ver sus conjugaciones.</p>
+                <!-- App content is rendered here by TypeScript -->
             </section>
         </main>
+        
+        <nav id="bottom-nav">
+            <button id="bottom-nav-translator" class="bottom-nav-btn" data-view="translator">
+                <svg class="bottom-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-1v-3H22V8h-7.01V5L11 9l3.99 4z"></path></svg>
+                <span id="bottom-nav-label-translator" class="bottom-nav-label">Traductor</span>
+            </button>
+             <button id="bottom-nav-dictionary" class="bottom-nav-btn" data-view="dictionary">
+                <svg class="bottom-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"></path></svg>
+                <span id="bottom-nav-label-dictionary" class="bottom-nav-label">Diccionario</span>
+            </button>
+            <button id="bottom-nav-conjugator" class="bottom-nav-btn" data-view="conjugator">
+                 <svg class="bottom-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 6v14H6v2h14c1.1 0 2-.9 2-2V6h-2z"></path><path d="M16 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 10H5v-2h10v2zm-1-4H5V6h10v2z"></path></svg>
+                <span id="bottom-nav-label-conjugator" class="bottom-nav-label">Conjugador</span>
+            </button>
+        </nav>
+
         <footer>
-            <div class="footer-left">
-                <a href="http://bit.ly/av-ma" target="_blank" rel="noopener noreferrer" aria-label="Avtandil Machitadze Website">
-                    <img id="footer-logo-img" src="https://i.postimg.cc/L8PF2rq9/Logo-ENG-full-B.png" alt="Avtandil Machitadze Logo" class="footer-logo">
-                </a>
+            <div class="footer-practice-link-container">
+                <a href="#" class="footer-practice-link"></a>
             </div>
-            <div class="footer-right">
-                <p id="footer-materials"></p>
-                <p id="footer-gemini-credit"></p>
+            <div class="footer-bottom-content">
+                <div class="footer-left">
+                    <a href="http://bit.ly/av-ma" target="_blank" rel="noopener noreferrer" aria-label="Avtandil Machitadze Website">
+                        <img id="footer-logo-img" src="https://i.postimg.cc/L8PF2rq9/Logo-ENG-full_B.png" alt="Avtandil Machitadze Logo" class="footer-logo">
+                    </a>
+                </div>
+                <div class="footer-right">
+                    <p class="footer-materials"></p>
+                    <a href="#" class="footer-about-link"></a>
+                    <p class="footer-gemini-credit"></p>
+                </div>
             </div>
         </footer>
     </div>
@@ -69,7 +110,69 @@
         </div>
       </div>
     </div>
+    
+    <!-- Modal for Image Upload Options -->
+    <div id="image-options-modal" class="modal-overlay" hidden>
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="image-modal-title">
+            <button class="modal-close" data-target-modal="image-options-modal" aria-label="Cerrar">&times;</button>
+            <h2 id="image-modal-title">Subir Imagen</h2>
+            <div class="image-options-buttons">
+                <button id="take-photo-btn" class="image-option-btn">Tomar Foto</button>
+                <button id="from-gallery-btn" class="image-option-btn">Desde Galería</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Image Cropper -->
+    <div id="cropper-modal" class="modal-overlay" hidden>
+        <div class="modal-content modal-content-cropper" role="dialog" aria-modal="true" aria-labelledby="cropper-modal-title">
+            <button class="modal-close" data-target-modal="cropper-modal" aria-label="Cerrar">&times;</button>
+            <h2 id="cropper-modal-title">Recortar Imagen</h2>
+            <div class="cropper-container">
+                <img id="cropper-image" src="">
+            </div>
+            <button id="crop-and-translate-btn" class="image-option-btn">Recortar y Traducir</button>
+        </div>
+    </div>
+    
+    <!-- PWA Install Prompt Modal -->
+    <div id="pwa-install-modal" class="modal-overlay" hidden>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="pwa-install-title">
+        <h2 id="pwa-install-title">Instalar Aplicación</h2>
+        <p id="pwa-install-body">Añade esta aplicación a tu pantalla de inicio para un acceso rápido y sin conexión.</p>
+        <div class="pwa-install-buttons">
+          <button id="pwa-install-decline-btn" class="pwa-install-btn pwa-install-btn--decline">Ahora no</button>
+          <button id="pwa-install-confirm-btn" class="pwa-install-btn pwa-install-btn--confirm">Instalar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generic Alert Modal -->
+    <div id="alert-modal" class="modal-overlay" hidden>
+      <div class="modal-content" role="alertdialog" aria-modal="true" aria-labelledby="alert-modal-title" aria-describedby="alert-modal-body">
+        <h2 id="alert-modal-title"></h2>
+        <p id="alert-modal-body"></p>
+        <button id="alert-modal-close-btn" class="pwa-install-btn pwa-install-btn--confirm">OK</button>
+      </div>
+    </div>
+
+    <input type="file" id="image-upload-gallery" accept="image/*" hidden>
+    <input type="file" id="image-upload-camera" accept="image/*" capture="environment" hidden>
+    <input type="file" id="document-upload-input" accept=".txt,.docx,.pdf" hidden>
 
     <script type="module" src="index.tsx"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

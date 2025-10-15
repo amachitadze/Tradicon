@@ -1,5 +1,9 @@
 {
-  "name": "Spanish Verb Conjugator",
+  "name": "Tradicon [Ka, Es] Original",
   "description": "A simple and fast Spanish verb conjugator powered by the Gemini API.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "clipboard-read"
+  ]
 }
