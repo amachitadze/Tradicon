@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const CACHE_NAME = 'conjugator-cache-v5';
+const CACHE_NAME = 'conjugator-cache-v8';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/index.css',
-    '/index.tsx',
+    '/index.js',
     '/manifest.json',
     'https://esm.sh/@google/genai@^0.14.0',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css',
     'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js',
-    'https://i.postimg.cc/L8PF2rq9/Logo-ENG-full_B.png',
-    'https://i.postimg.cc/6pXY4Sj5/Logo_GEO_full_B.png',
-    'https://i.postimg.cc/W4dBPVcw/image.png'
+    'https://i.postimg.cc/c1T2NJgV/avma.png',
+    'https://i.postimg.cc/tTP1GZL1/Tradicon-Logo-5-0.png',
+    'https://i.postimg.cc/PxFS9cn1/Tradicon-Favicon.png'
 ];
 
 // Install event: cache the application shell

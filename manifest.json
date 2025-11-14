@@ -3,25 +3,25 @@
   "short_name": "Tradicon",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fdfaf0",
-  "theme_color": "#c60b1e",
+  "background_color": "#FFFDF3",
+  "theme_color": "#1d0ee2",
   "description": "Conjuga verbos, busca en el diccionario y traduce texto entre español y georgiano.",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://i.postimg.cc/W4dBPVcw/image.png",
+      "src": "https://i.postimg.cc/3wCHBVSb/App-Icons.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "https://i.postimg.cc/W4dBPVcw/image.png",
+      "src": "https://i.postimg.cc/3wCHBVSb/App-Icons.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "https://i.postimg.cc/W4dBPVcw/image.png",
+      "src": "https://i.postimg.cc/3wCHBVSb/App-Icons.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
