@@ -11,7 +11,6 @@ import * as dataManager from './data-manager';
 import { setPwaInstallHandlers, setupPwaInstallPrompt, closeModalByEvent } from './utils';
 import { View, Language } from './types';
 import { addFullscreenEventListeners } from './fullscreen';
-import { registerSW } from 'virtual:pwa-register';
 
 // Polyfill for SpeechRecognition and augment global types for non-standard APIs
 declare global {
@@ -121,7 +120,15 @@ function init() {
     bindEventListeners();
     
     // Register the service worker for PWA offline capabilities
-    registerSW({ immediate: true });
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
+        });
+    }
     
     setupPwaInstallPrompt();
     setPwaInstallHandlers();
@@ -133,7 +140,6 @@ function init() {
     document.querySelectorAll(`.lang-btn[data-lang="${initialLang}"], .mobile-menu-lang-btn[data-lang="${initialLang}"]`).forEach(b => b.classList.add('active'));
     
     ui.setView(state.getCurrentView()); // Initial render with default view
-    ui.updateUIForLanguage();
 }
 
 document.addEventListener('DOMContentLoaded', init);
