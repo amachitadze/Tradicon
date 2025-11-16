@@ -2,10 +2,10 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import * as state from './state.js';
-import * as dom from './dom.js';
-import { translations, pronounMap } from './constants.js';
-import { Language } from './types.js';
+import * as state from './state';
+import * as dom from './dom';
+import { translations, pronounMap } from './constants';
+import { Language } from './types';
 import { Blob } from '@google/genai';
 
 // --- Audio Encoding/Decoding Utilities for Gemini API ---
@@ -438,24 +438,28 @@ export function openTenseModal(tenseKey: string) {
         if (typeof tenseInfo.examples === 'object' && 'hablar' in tenseInfo.examples) {
              const pronouns = ['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'];
              const verbExamples = {
-                ar: tenseInfo.examples.hablar as string[],
-                er: tenseInfo.examples.comer as string[],
-                ir: tenseInfo.examples.vivir as string[]
+                ar: (tenseInfo.examples as any).hablar as string[] || [],
+                er: (tenseInfo.examples as any).comer as string[] || [],
+                ir: (tenseInfo.examples as any).vivir as string[] || []
              };
-
-            const tableHeader = `<thead><tr><th>Pron.</th><th>-ar (hablar)</th><th>-er (comer)</th><th>-ir (vivir)</th></tr></thead>`;
-
-            const tableBodyRows = pronouns.map((pronounKey, index) => {
-                const cellAr = `<td>${boldEndingForTable(tenseKey, 'ar', verbExamples.ar[index])}</td>`;
-                const cellEr = `<td>${boldEndingForTable(tenseKey, 'er', verbExamples.er[index])}</td>`;
-                const cellIr = `<td>${boldEndingForTable(tenseKey, 'ir', verbExamples.ir[index])}</td>`;
-                
-                return `<tr><th>${pronounMap[pronounKey as keyof typeof pronounMap]}</th>${cellAr}${cellEr}${cellIr}</tr>`;
-            }).join('');
-
-            examplesHtml = `<table class="endings-table mobile-friendly">${tableHeader}<tbody>${tableBodyRows}</tbody></table>`;
-        } else { // Handle simple non-table examples (infinitivo, gerundio, etc.)
-             examplesHtml = `<ul class="modal-examples-list">${Object.values(tenseInfo.examples).map(ex => `<li>${ex}</li>`).join('')}</ul>`;
+             examplesHtml = `
+                <table class="endings-table mobile-friendly">
+                  <thead><tr><th></th><th>-ar (hablar)</th><th>-er (comer)</th><th>-ir (vivir)</th></tr></thead>
+                  <tbody>
+                    ${pronouns.map((p, i) => `
+                      <tr>
+                        <th>${pronounMap[p as keyof typeof pronounMap]}</th>
+                        <td>${boldEndingForTable(tenseKey, 'ar', verbExamples.ar[i])}</td>
+                        <td>${boldEndingForTable(tenseKey, 'er', verbExamples.er[i])}</td>
+                        <td>${boldEndingForTable(tenseKey, 'ir', verbExamples.ir[i])}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+             `;
+        } else { // It's the simpler examples structure
+            const simpleExamples = tenseInfo.examples as { [key: string]: string };
+            examplesHtml = `<ul class="modal-examples-list">${Object.values(simpleExamples).map(ex => `<li>${ex}</li>`).join('')}</ul>`;
         }
     }
 
@@ -464,49 +468,91 @@ export function openTenseModal(tenseKey: string) {
         <p>${tenseInfo.explanation}</p>
         <h3>${tenseInfo.adverbsTitle}</h3>
         <p>${tenseInfo.adverbs}</p>
-        ${examplesHtml ? `<h3>${tenseInfo.examplesTitle}</h3>${examplesHtml}`: ''}
+        <h3>${tenseInfo.examplesTitle}</h3>
+        ${examplesHtml}
     `;
+
     openModalById('tense-modal');
 }
 
 // --- PWA Install Prompt ---
-export function setupPwaInstallPrompt() {
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        state.setDeferredInstallPrompt(e);
-        const pwaModal = document.getElementById('pwa-install-modal');
-        if (pwaModal) {
-            const t = translations[state.getCurrentLanguage()];
-            (document.getElementById('pwa-install-title') as HTMLElement).textContent = t.pwaInstallTitle;
-            (document.getElementById('pwa-install-body') as HTMLElement).textContent = t.pwaInstallBody;
-            (document.getElementById('pwa-install-confirm-btn') as HTMLElement).textContent = t.pwaInstallConfirm;
-            (document.getElementById('pwa-install-decline-btn') as HTMLElement).textContent = t.pwaInstallDecline;
-            openModalById('pwa-install-modal');
-        }
-    });
-}
 
-async function handlePwaInstall() {
-     closeModalByEvent({ currentTarget: document.getElementById('pwa-install-modal') } as unknown as Event);
-     const deferredInstallPrompt = state.getDeferredInstallPrompt();
-     if (deferredInstallPrompt) {
-        deferredInstallPrompt.prompt();
-        const { outcome } = await deferredInstallPrompt.userChoice;
-        console.log(`User response to the install prompt: ${outcome}`);
-        state.setDeferredInstallPrompt(null);
+/**
+ * Displays the custom PWA installation modal.
+ */
+function showPwaInstallModal() {
+    const t = translations[state.getCurrentLanguage()];
+    const modal = document.getElementById('pwa-install-modal');
+    const title = document.getElementById('pwa-install-title');
+    const body = document.getElementById('pwa-install-body');
+    const confirmBtn = document.getElementById('pwa-install-confirm-btn');
+    const declineBtn = document.getElementById('pwa-install-decline-btn');
+
+    if (modal && title && body && confirmBtn && declineBtn) {
+        title.textContent = t.pwaInstallTitle;
+        body.textContent = t.pwaInstallBody;
+        confirmBtn.textContent = t.pwaInstallConfirm;
+        declineBtn.textContent = t.pwaInstallDecline;
+        openModalById('pwa-install-modal');
     }
 }
 
-export function setPwaInstallHandlers() {
-    document.getElementById('pwa-install-confirm-btn')?.addEventListener('click', handlePwaInstall);
-    document.getElementById('pwa-install-decline-btn')?.addEventListener('click', () => closeModalByEvent({ currentTarget: document.getElementById('pwa-install-modal') } as unknown as Event));
+/**
+ * Listens for the 'beforeinstallprompt' event and shows a custom install UI.
+ */
+export function setupPwaInstallPrompt() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        state.setDeferredInstallPrompt(e);
+        // Update UI to notify the user they can install the PWA
+        showPwaInstallModal();
+    });
 }
 
-// --- Misc Utilities ---
-export const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+/**
+ * Sets up click handlers for the custom PWA installation modal buttons.
+ */
+export function setPwaInstallHandlers() {
+    const confirmBtn = document.getElementById('pwa-install-confirm-btn');
+    const declineBtn = document.getElementById('pwa-install-decline-btn');
 
-export function escapeHtml(unsafe: string): string {
-    return unsafe
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', async () => {
+            const deferredPrompt = state.getDeferredInstallPrompt();
+            if (!deferredPrompt) {
+                return;
+            }
+            // Show the install prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            // We've used the prompt, and can't use it again, throw it away
+            state.setDeferredInstallPrompt(null);
+            // Hide the modal
+            closeModalByEvent({ currentTarget: confirmBtn } as unknown as Event);
+        });
+    }
+
+    if (declineBtn) {
+        declineBtn.addEventListener('click', () => {
+            // Hide the modal
+            closeModalByEvent({ currentTarget: declineBtn } as unknown as Event);
+        });
+    }
+}
+
+// --- Other Utilities ---
+
+export function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export function escapeHtml(str: string): string {
+    if (!str) return '';
+    return str
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -514,16 +560,27 @@ export function escapeHtml(unsafe: string): string {
         .replace(/'/g, "&#039;");
 }
 
-export function highlightVerbInSentence(sentence: string, conjugations: { [key: string]: string }): string {
-    const allForms = Object.values(conjugations);
-    allForms.sort((a, b) => b.length - a.length);
+export function highlightVerbInSentence(sentence: string, conjugations: any): string {
+    if (!sentence || !conjugations) return sentence;
 
-    for (const form of allForms) {
-        if (!form) continue;
-        const regex = new RegExp(`\\b(${form.replace(/ /g, '\\s')})\\b`, 'gi');
-        if (regex.test(sentence)) {
-            return sentence.replace(regex, '<strong>$1</strong>');
-        }
-    }
-    return sentence;
+    const allForms = Object.values(conjugations);
+    // Create a regex that finds any of the conjugation forms as whole words
+    const regex = new RegExp(`\\b(${allForms.join('|')})\\b`, 'gi');
+
+    return sentence.replace(regex, '<b>$1</b>');
+}
+
+export function blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            if (typeof reader.result === 'string') {
+                resolve(reader.result.split(',')[1]);
+            } else {
+                reject(new Error("Failed to read blob as Base64 string."));
+            }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
 }

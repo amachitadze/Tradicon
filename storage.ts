@@ -2,9 +2,9 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import { TranslationItem, PracticeHistoryItem, Persona, ChatMessage } from './types.js';
-import { translations } from './constants.js';
-import * as state from './state.js';
+import { TranslationItem, PracticeHistoryItem, Persona, ChatMessage } from './types';
+import { translations } from './constants';
+import * as state from './state';
 
 const MAX_RECENTS = 12;
 

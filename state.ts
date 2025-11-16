@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import { Language, View, TranslationItem, PracticeSession, ChatMessage, Persona, Tone } from './types.js';
+import { Language, View, TranslationItem, PracticeSession, ChatMessage, Persona, Tone } from './types';
 
 // --- State Variables ---
 

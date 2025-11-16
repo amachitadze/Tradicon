@@ -3,23 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const CACHE_NAME = 'conjugator-cache-v8';
+// This service worker is intentionally left simple for now.
+// It will be populated with caching strategies during the build process if needed,
+// or can be manually edited for custom offline logic.
+
+const CACHE_NAME = 'tradicon-cache-v1';
+// Add assets that should be cached for offline use.
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/index.css',
-    '/index.js',
     '/manifest.json',
-    'https://esm.sh/@google/genai@^0.14.0',
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap',
-    'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css',
-    'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js',
-    'https://i.postimg.cc/c1T2NJgV/avma.png',
-    'https://i.postimg.cc/tTP1GZL1/Tradicon-Logo-5-0.png',
-    'https://i.postimg.cc/PxFS9cn1/Tradicon-Favicon.png'
+    // Add other critical assets like logos or fonts if they are self-hosted
 ];
 
-// Install event: cache the application shell
+
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -33,52 +31,31 @@ self.addEventListener('install', event => {
     );
 });
 
-// Fetch event: serve from cache, fall back to network, and cache new assets
 self.addEventListener('fetch', event => {
-    // We only want to handle GET requests.
     if (event.request.method !== 'GET') {
         return;
     }
-    
-    // For API calls (or other resources we don't want to cache), fetch from network.
-    // Example: if (event.request.url.includes('api.example.com')) { ... }
-    
-    event.respondWith(
-        caches.open(CACHE_NAME).then(cache => {
-            return cache.match(event.request).then(response => {
-                // If the resource is in the cache, serve it.
-                if (response) {
-                    return response;
-                }
 
-                // If the resource is not in the cache, fetch it from the network.
-                return fetch(event.request).then(networkResponse => {
-                    // Check if we received a valid response
-                    if (networkResponse && networkResponse.status === 200) {
-                        // IMPORTANT: Clone the response. A response is a stream
-                        // and because we want the browser to consume the response
-                        // as well as the cache consuming the response, we need
-                        // to clone it so we have two streams.
-                        const responseToCache = networkResponse.clone();
-                        
-                        // Cache the fetched resource.
+    event.respondWith(
+        caches.match(event.request).then(cachedResponse => {
+            // Cache first, then network
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            return fetch(event.request).then(networkResponse => {
+                if (networkResponse && networkResponse.status === 200 && event.request.url.startsWith('http')) {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME).then(cache => {
                         cache.put(event.request, responseToCache);
-                    }
-                    
-                    return networkResponse;
-                });
-            }).catch(error => {
-                // This will be triggered if both cache and network fail.
-                console.error('Fetch failed; returning offline page instead.', error);
-                // Optionally, return a fallback offline page.
-                // return caches.match('/offline.html');
+                    });
+                }
+                return networkResponse;
             });
         })
     );
 });
 
-
-// Activate event: clean up old caches
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -86,7 +63,6 @@ self.addEventListener('activate', event => {
             return Promise.all(
                 cacheNames.map(cacheName => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        console.log('Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
