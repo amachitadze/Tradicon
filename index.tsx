@@ -2,6 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
+import './index.css';
 import * as dom from './dom';
 import * as state from './state';
 import * as ui from './ui';
