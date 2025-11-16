@@ -11,6 +11,7 @@ import * as dataManager from './data-manager';
 import { setPwaInstallHandlers, setupPwaInstallPrompt, closeModalByEvent } from './utils';
 import { View, Language } from './types';
 import { addFullscreenEventListeners } from './fullscreen';
+import { registerSW } from 'virtual:pwa-register';
 
 // Polyfill for SpeechRecognition and augment global types for non-standard APIs
 declare global {
@@ -118,6 +119,9 @@ function bindEventListeners() {
 
 function init() {
     bindEventListeners();
+    
+    // Register the service worker for PWA offline capabilities
+    registerSW({ immediate: true });
     
     setupPwaInstallPrompt();
     setPwaInstallHandlers();

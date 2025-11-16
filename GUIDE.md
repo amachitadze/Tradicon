@@ -6,9 +6,7 @@ This guide provides an overview of the project structure, deployment instruction
 
 The project is built with Vite and vanilla TypeScript, structured as follows:
 
--   `public/`: Contains static assets that are copied directly to the build output.
-    -   `manifest.json`: The Progressive Web App (PWA) manifest.
-    -   `sw.js`: The service worker for offline functionality.
+-   `public/`: Contains static assets that are copied directly to the build output. (Note: `sw.js` and `manifest.json` are now generated automatically during the build process).
 -   `index.html`: The main HTML entry point for the application.
 -   `index.tsx`: The main TypeScript module that initializes the app, binds event listeners, and manages the overall flow.
 -   `index.css`: The global stylesheet for the application.
@@ -22,7 +20,7 @@ The project is built with Vite and vanilla TypeScript, structured as follows:
     -   `types.ts`: Defines TypeScript types and interfaces used throughout the app.
     -   `practice/`: Contains the question data for the practice module.
 -   `package.json`: Defines project dependencies and build scripts.
--   `vite.config.ts`: Configuration file for the Vite build tool.
+-   `vite.config.ts`: Configuration file for the Vite build tool. This file now includes the PWA configuration, which generates the service worker and manifest.
 -   `vercel.json`: Configuration for deploying to the Vercel platform.
 
 ## Deployment to Vercel
