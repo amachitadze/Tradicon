@@ -1,5 +1,5 @@
 {
-  "name": "Tradicon [Ka, Es] Vercel",
+  "name": "Tradicon [Ka, Es] Vecel",
   "description": "A simple and fast Spanish verb conjugator powered by the Gemini API.",
   "requestFramePermissions": [
     "camera",

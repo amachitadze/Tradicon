@@ -2,14 +2,14 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import * as dom from './dom.js';
-import * as state from './state.js';
-import * as ui from './ui.js';
-import * as storage from './storage.js';
-import * as dataManager from './data-manager.js';
-import { setPwaInstallHandlers, setupPwaInstallPrompt, closeModalByEvent } from './utils.js';
-import { View, Language } from './types.js';
-import { addFullscreenEventListeners } from './fullscreen.js';
+import * as dom from './dom';
+import * as state from './state';
+import * as ui from './ui';
+import * as storage from './storage';
+import * as dataManager from './data-manager';
+import { setPwaInstallHandlers, setupPwaInstallPrompt, closeModalByEvent } from './utils';
+import { View, Language } from './types';
+import { addFullscreenEventListeners } from './fullscreen';
 
 // Polyfill for SpeechRecognition and augment global types for non-standard APIs
 declare global {

@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import { translations } from './constants.js';
+import { translations } from './constants';
 
 export type Language = keyof typeof translations;
 export type View = 'conjugator' | 'dictionary' | 'translator' | 'practice' | 'history' | 'favorites' | 'about' | 'chat' | 'guidelines';
